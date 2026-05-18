@@ -6,7 +6,7 @@
 
 ## Inputs
 
-- **PivotPoint** (number)
+- **PivotPoint** (array)
 - **X** (number)
 - **Y** (number)
 - **Z** (number)

@@ -76,7 +76,8 @@
       "x": 0.025384615384615384,
       "y": 0.15384615384615385,
       "uniqueID": "id-13",
-      "name": "PivotPoint"
+      "name": "PivotPoint",
+      "type": "array"
     },
     {
       "atomType": "Input",
