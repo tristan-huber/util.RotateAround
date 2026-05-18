@@ -47,30 +47,24 @@
           "ioValue": "__GEOMETRY_INPUT__"
         },
         {
-          "name": "pivotPoint",
-          "ioValue": [
-            0,
-            100,
-            0
-          ]
-        },
-        {
           "name": "x",
           "ioValue": 60,
           "currentEquation": "60"
         },
         {
           "name": "y",
-          "ioValue": 0
+          "ioValue": 30,
+          "currentEquation": "30"
         },
         {
           "name": "z",
-          "ioValue": 0
+          "ioValue": 10,
+          "currentEquation": "10"
         }
       ],
       "interpreterVersion": 1,
-      "code": "\n/**\n * =========================================================================\n *  ABUNDANCE CODE ATOM — Quick Reference\n * =========================================================================\n *\n *  HOW INPUTS WORK\n *  ---------------\n *  Every parameter of run() becomes an input port on this atom.\n *  Four types are supported:\n *\n *    number   -> numeric input / slider\n *    string   -> text input  (great for hex color codes, labels, etc.)\n *    boolean  -> true/false toggle\n *    Assembly -> geometry -- wire this to the output of another atom\n *\n *  Give a parameter a default value ( = x ) to make it optional.\n *  Mark it with ? (name?: Assembly) to make it optional with no default.\n *  Parameters without a default must be connected before the atom runs.\n *\n *  RETURN VALUE\n *  ------------\n *  Return an Assembly, an Assembly[], or a primitive (number/string/boolean).\n *  Returning an Assembly[] lets downstream atoms (BOM, cut layout...)\n *  see each piece independently.\n *\n *  GEOMETRY API  (replicad is available as a global)\n *  -------------------------------------------------\n *  Create 2-D sketches\n *    replicad.drawCircle(radius)\n *    replicad.drawRectangle(width, height)\n *    replicad.drawRoundedRectangle(width, height, cornerRadius)\n *\n *  Turn a 2-D sketch into a 3-D solid\n *    sketch.sketchOnPlane().extrude(distance)\n *    sketch.sketchOnPlane().revolve()          // rotate 360 deg around Z\n *\n *  Create 3-D primitives directly\n *    replicad.makeBaseBox(width, depth, height)\n *    replicad.makeSphere(radius)\n *    replicad.makeCylinder(radius, height)\n *\n *  Boolean operations\n *    solidA.fuse(solidB)                       // union\n *    solidA.cut(solidB)                        // difference (cut a hole)\n *    solidA.intersect(solidB)                  // intersection\n *\n *  Post-processing\n *    solid.fillet(radius)                      // round ALL edges\n *    solid.fillet(r, e => e.inPlane(\"XY\", z))  // round only top-face edges\n *    solid.chamfer(distance)                   // bevel ALL edges\n *    solid.translate(x, y, z)                  // move the solid\n *    solid.rotate(angle, [0, 0, 1])            // rotate around Z axis\n *\n *  ASSEMBLY CLASS\n *  --------------\n *  Wrap any replicad solid in an Assembly to attach display metadata:\n *    new Assembly({ geometry, color, tags, bom })\n *      geometry -> replicad solid / drawing returned by the API above\n *      color    -> hex string shown in the 3-D viewport  (\"#A3CE5B\")\n *      tags     -> string[] used for filtering in cut layout / BOM\n *      bom      -> string[] lines added to the Bill of Materials panel\n *\n *  AI PROMPT TIP\n *  -------------\n *  Copy the code in this editor into ChatGPT / Claude and say something like:\n *    \"Modify this Abundance Code Atom to create a gear with 12 teeth\"\n *    \"Change this to make a hexagonal nut instead of a round plate\"\n *  The comments above give the AI all the context it needs to produce\n *  valid, working Abundance TypeScript code.\n * =========================================================================\n */\n\n/**\n * A rectangular mounting plate with a circular hole in the centre.\n * All parameters have defaults so the atom produces geometry immediately\n * after creation — no connections required to get started.\n */\nfunction run(\n  toRotate: Assembly,\n  pivotPoint: number[],\n  x: number = 0,\n  y: number = 0,\n  z: number = 0,\n) {\n  if (!toRotate.is2D()) {\n    let validatedPivot: [number, number, number]|undefined = undefined\n    if (pivotPoint?.length === 3) {\n      validatedPivot = pivotPoint as [number, number, number];\n    }\n    //@ts-ignore\n    if (pivotPoint?.geometry) {\n      //@ts-ignore\n      const assemblyPoint = pivotPoint as Assembly;\n\n      if (assemblyPoint.isLeaf() && assemblyPoint.isPoint()) {\n        validatedPivot = (assemblyPoint.geometry as replicad.Vertex).asTuple()\n      } else {\n        throw new Error(\"If pivot is being provided as an assembly it must be an Assembly of a singular Point\")\n      }\n    }\n    \n    if (!validatedPivot) {\n      // Point not provided, set a default\n      // get assembly bounds\n      \n      let mins = [Infinity, Infinity, Infinity]\n      let maxs = [-Infinity, -Infinity, -Infinity]\n      toRotate.onLeafs((leaf) => {\n        const bounds = leaf.geometry.clone().boundingBox.bounds;\n        const minEdge = bounds[0]\n        const maxEdge = bounds[1]\n        mins = mins.map((v, i) => Math.min(v, minEdge[i]))\n        maxs = maxs.map((v, i) => Math.max(v, maxEdge[i]))\n        return leaf;\n      })\n      validatedPivot = mins.map((v, i) => {return (v + maxs[i]) / 2;}) as [number, number, number]\n    }\n    // now that pivot point is set, do the rotation\n    return toRotate.onLeafs((leaf) => {\n      leaf.geometry = (leaf.geometry as replicad.AnyShape).rotate(x, validatedPivot, [1,0,0])\n      return leaf;\n    });\n  }\n  throw new Error(\"2d drawings not yet supported\")\n}\n",
-      "compiledCode": "\"use strict\";\n/**\n * =========================================================================\n *  ABUNDANCE CODE ATOM — Quick Reference\n * =========================================================================\n *\n *  HOW INPUTS WORK\n *  ---------------\n *  Every parameter of run() becomes an input port on this atom.\n *  Four types are supported:\n *\n *    number   -> numeric input / slider\n *    string   -> text input  (great for hex color codes, labels, etc.)\n *    boolean  -> true/false toggle\n *    Assembly -> geometry -- wire this to the output of another atom\n *\n *  Give a parameter a default value ( = x ) to make it optional.\n *  Mark it with ? (name?: Assembly) to make it optional with no default.\n *  Parameters without a default must be connected before the atom runs.\n *\n *  RETURN VALUE\n *  ------------\n *  Return an Assembly, an Assembly[], or a primitive (number/string/boolean).\n *  Returning an Assembly[] lets downstream atoms (BOM, cut layout...)\n *  see each piece independently.\n *\n *  GEOMETRY API  (replicad is available as a global)\n *  -------------------------------------------------\n *  Create 2-D sketches\n *    replicad.drawCircle(radius)\n *    replicad.drawRectangle(width, height)\n *    replicad.drawRoundedRectangle(width, height, cornerRadius)\n *\n *  Turn a 2-D sketch into a 3-D solid\n *    sketch.sketchOnPlane().extrude(distance)\n *    sketch.sketchOnPlane().revolve()          // rotate 360 deg around Z\n *\n *  Create 3-D primitives directly\n *    replicad.makeBaseBox(width, depth, height)\n *    replicad.makeSphere(radius)\n *    replicad.makeCylinder(radius, height)\n *\n *  Boolean operations\n *    solidA.fuse(solidB)                       // union\n *    solidA.cut(solidB)                        // difference (cut a hole)\n *    solidA.intersect(solidB)                  // intersection\n *\n *  Post-processing\n *    solid.fillet(radius)                      // round ALL edges\n *    solid.fillet(r, e => e.inPlane(\"XY\", z))  // round only top-face edges\n *    solid.chamfer(distance)                   // bevel ALL edges\n *    solid.translate(x, y, z)                  // move the solid\n *    solid.rotate(angle, [0, 0, 1])            // rotate around Z axis\n *\n *  ASSEMBLY CLASS\n *  --------------\n *  Wrap any replicad solid in an Assembly to attach display metadata:\n *    new Assembly({ geometry, color, tags, bom })\n *      geometry -> replicad solid / drawing returned by the API above\n *      color    -> hex string shown in the 3-D viewport  (\"#A3CE5B\")\n *      tags     -> string[] used for filtering in cut layout / BOM\n *      bom      -> string[] lines added to the Bill of Materials panel\n *\n *  AI PROMPT TIP\n *  -------------\n *  Copy the code in this editor into ChatGPT / Claude and say something like:\n *    \"Modify this Abundance Code Atom to create a gear with 12 teeth\"\n *    \"Change this to make a hexagonal nut instead of a round plate\"\n *  The comments above give the AI all the context it needs to produce\n *  valid, working Abundance TypeScript code.\n * =========================================================================\n */\n/**\n * A rectangular mounting plate with a circular hole in the centre.\n * All parameters have defaults so the atom produces geometry immediately\n * after creation — no connections required to get started.\n */\nfunction run(toRotate, pivotPoint, x = 0, y = 0, z = 0) {\n    if (!toRotate.is2D()) {\n        let validatedPivot = undefined;\n        if (pivotPoint?.length === 3) {\n            validatedPivot = pivotPoint;\n        }\n        //@ts-ignore\n        if (pivotPoint?.geometry) {\n            //@ts-ignore\n            const assemblyPoint = pivotPoint;\n            if (assemblyPoint.isLeaf() && assemblyPoint.isPoint()) {\n                validatedPivot = assemblyPoint.geometry.asTuple();\n            }\n            else {\n                throw new Error(\"If pivot is being provided as an assembly it must be an Assembly of a singular Point\");\n            }\n        }\n        if (!validatedPivot) {\n            // Point not provided, set a default\n            // get assembly bounds\n            let mins = [Infinity, Infinity, Infinity];\n            let maxs = [-Infinity, -Infinity, -Infinity];\n            toRotate.onLeafs((leaf) => {\n                const bounds = leaf.geometry.clone().boundingBox.bounds;\n                const minEdge = bounds[0];\n                const maxEdge = bounds[1];\n                mins = mins.map((v, i) => Math.min(v, minEdge[i]));\n                maxs = maxs.map((v, i) => Math.max(v, maxEdge[i]));\n                return leaf;\n            });\n            validatedPivot = mins.map((v, i) => { return (v + maxs[i]) / 2; });\n        }\n        // now that pivot point is set, do the rotation\n        return toRotate.onLeafs((leaf) => {\n            leaf.geometry = leaf.geometry.rotate(x, validatedPivot, [1, 0, 0]);\n            return leaf;\n        });\n    }\n    throw new Error(\"2d drawings not yet supported\");\n}\n"
+      "code": "\n/**\n * =========================================================================\n *  ABUNDANCE CODE ATOM — Quick Reference\n * =========================================================================\n *\n *  HOW INPUTS WORK\n *  ---------------\n *  Every parameter of run() becomes an input port on this atom.\n *  Four types are supported:\n *\n *    number   -> numeric input / slider\n *    string   -> text input  (great for hex color codes, labels, etc.)\n *    boolean  -> true/false toggle\n *    Assembly -> geometry -- wire this to the output of another atom\n *\n *  Give a parameter a default value ( = x ) to make it optional.\n *  Mark it with ? (name?: Assembly) to make it optional with no default.\n *  Parameters without a default must be connected before the atom runs.\n *\n *  RETURN VALUE\n *  ------------\n *  Return an Assembly, an Assembly[], or a primitive (number/string/boolean).\n *  Returning an Assembly[] lets downstream atoms (BOM, cut layout...)\n *  see each piece independently.\n *\n *  GEOMETRY API  (replicad is available as a global)\n *  -------------------------------------------------\n *  Create 2-D sketches\n *    replicad.drawCircle(radius)\n *    replicad.drawRectangle(width, height)\n *    replicad.drawRoundedRectangle(width, height, cornerRadius)\n *\n *  Turn a 2-D sketch into a 3-D solid\n *    sketch.sketchOnPlane().extrude(distance)\n *    sketch.sketchOnPlane().revolve()          // rotate 360 deg around Z\n *\n *  Create 3-D primitives directly\n *    replicad.makeBaseBox(width, depth, height)\n *    replicad.makeSphere(radius)\n *    replicad.makeCylinder(radius, height)\n *\n *  Boolean operations\n *    solidA.fuse(solidB)                       // union\n *    solidA.cut(solidB)                        // difference (cut a hole)\n *    solidA.intersect(solidB)                  // intersection\n *\n *  Post-processing\n *    solid.fillet(radius)                      // round ALL edges\n *    solid.fillet(r, e => e.inPlane(\"XY\", z))  // round only top-face edges\n *    solid.chamfer(distance)                   // bevel ALL edges\n *    solid.translate(x, y, z)                  // move the solid\n *    solid.rotate(angle, [0, 0, 1])            // rotate around Z axis\n *\n *  ASSEMBLY CLASS\n *  --------------\n *  Wrap any replicad solid in an Assembly to attach display metadata:\n *    new Assembly({ geometry, color, tags, bom })\n *      geometry -> replicad solid / drawing returned by the API above\n *      color    -> hex string shown in the 3-D viewport  (\"#A3CE5B\")\n *      tags     -> string[] used for filtering in cut layout / BOM\n *      bom      -> string[] lines added to the Bill of Materials panel\n *\n *  AI PROMPT TIP\n *  -------------\n *  Copy the code in this editor into ChatGPT / Claude and say something like:\n *    \"Modify this Abundance Code Atom to create a gear with 12 teeth\"\n *    \"Change this to make a hexagonal nut instead of a round plate\"\n *  The comments above give the AI all the context it needs to produce\n *  valid, working Abundance TypeScript code.\n * =========================================================================\n */\n\n/**\n * A rectangular mounting plate with a circular hole in the centre.\n * All parameters have defaults so the atom produces geometry immediately\n * after creation — no connections required to get started.\n */\nfunction run(\n  toRotate: Assembly,\n  pivotPoint: number[],\n  x: number = 0,\n  y: number = 0,\n  z: number = 0,\n) {\n  if (!toRotate.is2D()) {\n    let validatedPivot: [number, number, number]|undefined = undefined\n    if (pivotPoint?.length === 3) {\n      validatedPivot = pivotPoint as [number, number, number];\n    }\n    //@ts-ignore\n    if (pivotPoint?.geometry) {\n      //@ts-ignore\n      const assemblyPoint = pivotPoint as Assembly;\n\n      if (assemblyPoint.isLeaf() && assemblyPoint.isPoint()) {\n        validatedPivot = (assemblyPoint.geometry as replicad.Vertex).asTuple()\n      } else {\n        throw new Error(\"If pivot is being provided as an assembly it must be an Assembly of a singular Point\")\n      }\n    }\n    \n    if (!validatedPivot) {\n      // Point not provided, set a default\n      // get assembly bounds\n      \n      let mins = [Infinity, Infinity, Infinity]\n      let maxs = [-Infinity, -Infinity, -Infinity]\n      toRotate.onLeafs((leaf) => {\n        const bounds = leaf.geometry.clone().boundingBox.bounds;\n        const minEdge = bounds[0]\n        const maxEdge = bounds[1]\n        mins = mins.map((v, i) => Math.min(v, minEdge[i]))\n        maxs = maxs.map((v, i) => Math.max(v, maxEdge[i]))\n        return leaf;\n      })\n      validatedPivot = mins.map((v, i) => {return (v + maxs[i]) / 2;}) as [number, number, number]\n    }\n    const transform = eulerToSingleAxisRotation(x, y, z)\n    // now that pivot point is set, do the rotation\n    return toRotate.onLeafs((leaf) => {\n      leaf.geometry = (leaf.geometry as replicad.AnyShape).rotate(transform.angleDeg, validatedPivot, transform.axis)\n      return leaf;\n    });\n  }\n  throw new Error(\"2d drawings not yet supported\")\n}\n\n///// AI Gen /////\n\n/**\n * Consolidate Euler rotations (X/Y/Z) into a single axis-angle rotation.\n *\n * Given rotations around the local/global X, Y, Z axes:\n *   Rx(xDeg) -> Ry(yDeg) -> Rz(zDeg)\n *\n * This computes:\n *   angleDeg\n *   axis [x,y,z]\n *\n * so you can do:\n *   obj.rotate(angleDeg, center, axis)\n *\n * Assumes:\n * - Right-handed coordinate system\n * - Intrinsic rotations applied in X -> Y -> Z order\n * - rotate() uses axis-angle rotation\n */\n\ntype Vec3 = [number, number, number];\n\ninterface AxisAngle {\n  angleDeg: number;\n  axis: Vec3;\n}\n\nfunction degreesToRadians(deg: number): number {\n  return (deg * Math.PI) / 180;\n}\n\nfunction radiansToDegrees(rad: number): number {\n  return (rad * 180) / Math.PI;\n}\n\n/**\n * 3x3 matrix multiplication\n */\nfunction multiply3x3(a: number[][], b: number[][]): number[][] {\n  const out = Array.from({ length: 3 }, () => [0, 0, 0]);\n\n  for (let r = 0; r < 3; r++) {\n    for (let c = 0; c < 3; c++) {\n      out[r][c] =\n        a[r][0] * b[0][c] +\n        a[r][1] * b[1][c] +\n        a[r][2] * b[2][c];\n    }\n  }\n\n  return out;\n}\n\n/**\n * Rotation matrix around X axis\n */\nfunction rotationX(rad: number): number[][] {\n  const c = Math.cos(rad);\n  const s = Math.sin(rad);\n\n  return [\n    [1, 0, 0],\n    [0, c, -s],\n    [0, s, c],\n  ];\n}\n\n/**\n * Rotation matrix around Y axis\n */\nfunction rotationY(rad: number): number[][] {\n  const c = Math.cos(rad);\n  const s = Math.sin(rad);\n\n  return [\n    [c, 0, s],\n    [0, 1, 0],\n    [-s, 0, c],\n  ];\n}\n\n/**\n * Rotation matrix around Z axis\n */\nfunction rotationZ(rad: number): number[][] {\n  const c = Math.cos(rad);\n  const s = Math.sin(rad);\n\n  return [\n    [c, -s, 0],\n    [s, c, 0],\n    [0, 0, 1],\n  ];\n}\n\n/**\n * Convert a rotation matrix into axis-angle form.\n */\nfunction matrixToAxisAngle(m: number[][]): AxisAngle {\n  const trace = m[0][0] + m[1][1] + m[2][2];\n\n  // Numerical safety\n  const cosTheta = Math.min(1, Math.max(-1, (trace - 1) / 2));\n\n  const theta = Math.acos(cosTheta);\n\n  // No rotation\n  if (Math.abs(theta) < 1e-8) {\n    return {\n      angleDeg: 0,\n      axis: [1, 0, 0],\n    };\n  }\n\n  const sinTheta = Math.sin(theta);\n\n  const x = (m[2][1] - m[1][2]) / (2 * sinTheta);\n  const y = (m[0][2] - m[2][0]) / (2 * sinTheta);\n  const z = (m[1][0] - m[0][1]) / (2 * sinTheta);\n\n  // Normalize axis\n  const len = Math.hypot(x, y, z);\n\n  return {\n    angleDeg: radiansToDegrees(theta),\n    axis: [x / len, y / len, z / len],\n  };\n}\n\n/**\n * Convert Euler rotations into one axis-angle rotation.\n *\n * Rotation order:\n *   X -> Y -> Z\n *\n * If your CAD engine applies them differently,\n * change the multiplication order.\n */\nfunction eulerToSingleAxisRotation(\n  xDeg: number,\n  yDeg: number,\n  zDeg: number\n): AxisAngle {\n  const rx = rotationX(degreesToRadians(xDeg));\n  const ry = rotationY(degreesToRadians(yDeg));\n  const rz = rotationZ(degreesToRadians(zDeg));\n\n  // Combined rotation matrix:\n  // Apply X, then Y, then Z\n  const combined = multiply3x3(\n    rz,\n    multiply3x3(ry, rx)\n  );\n\n  return matrixToAxisAngle(combined);\n}\n",
+      "compiledCode": "\"use strict\";\n/**\n * =========================================================================\n *  ABUNDANCE CODE ATOM — Quick Reference\n * =========================================================================\n *\n *  HOW INPUTS WORK\n *  ---------------\n *  Every parameter of run() becomes an input port on this atom.\n *  Four types are supported:\n *\n *    number   -> numeric input / slider\n *    string   -> text input  (great for hex color codes, labels, etc.)\n *    boolean  -> true/false toggle\n *    Assembly -> geometry -- wire this to the output of another atom\n *\n *  Give a parameter a default value ( = x ) to make it optional.\n *  Mark it with ? (name?: Assembly) to make it optional with no default.\n *  Parameters without a default must be connected before the atom runs.\n *\n *  RETURN VALUE\n *  ------------\n *  Return an Assembly, an Assembly[], or a primitive (number/string/boolean).\n *  Returning an Assembly[] lets downstream atoms (BOM, cut layout...)\n *  see each piece independently.\n *\n *  GEOMETRY API  (replicad is available as a global)\n *  -------------------------------------------------\n *  Create 2-D sketches\n *    replicad.drawCircle(radius)\n *    replicad.drawRectangle(width, height)\n *    replicad.drawRoundedRectangle(width, height, cornerRadius)\n *\n *  Turn a 2-D sketch into a 3-D solid\n *    sketch.sketchOnPlane().extrude(distance)\n *    sketch.sketchOnPlane().revolve()          // rotate 360 deg around Z\n *\n *  Create 3-D primitives directly\n *    replicad.makeBaseBox(width, depth, height)\n *    replicad.makeSphere(radius)\n *    replicad.makeCylinder(radius, height)\n *\n *  Boolean operations\n *    solidA.fuse(solidB)                       // union\n *    solidA.cut(solidB)                        // difference (cut a hole)\n *    solidA.intersect(solidB)                  // intersection\n *\n *  Post-processing\n *    solid.fillet(radius)                      // round ALL edges\n *    solid.fillet(r, e => e.inPlane(\"XY\", z))  // round only top-face edges\n *    solid.chamfer(distance)                   // bevel ALL edges\n *    solid.translate(x, y, z)                  // move the solid\n *    solid.rotate(angle, [0, 0, 1])            // rotate around Z axis\n *\n *  ASSEMBLY CLASS\n *  --------------\n *  Wrap any replicad solid in an Assembly to attach display metadata:\n *    new Assembly({ geometry, color, tags, bom })\n *      geometry -> replicad solid / drawing returned by the API above\n *      color    -> hex string shown in the 3-D viewport  (\"#A3CE5B\")\n *      tags     -> string[] used for filtering in cut layout / BOM\n *      bom      -> string[] lines added to the Bill of Materials panel\n *\n *  AI PROMPT TIP\n *  -------------\n *  Copy the code in this editor into ChatGPT / Claude and say something like:\n *    \"Modify this Abundance Code Atom to create a gear with 12 teeth\"\n *    \"Change this to make a hexagonal nut instead of a round plate\"\n *  The comments above give the AI all the context it needs to produce\n *  valid, working Abundance TypeScript code.\n * =========================================================================\n */\n/**\n * A rectangular mounting plate with a circular hole in the centre.\n * All parameters have defaults so the atom produces geometry immediately\n * after creation — no connections required to get started.\n */\nfunction run(toRotate, pivotPoint, x = 0, y = 0, z = 0) {\n    if (!toRotate.is2D()) {\n        let validatedPivot = undefined;\n        if (pivotPoint?.length === 3) {\n            validatedPivot = pivotPoint;\n        }\n        //@ts-ignore\n        if (pivotPoint?.geometry) {\n            //@ts-ignore\n            const assemblyPoint = pivotPoint;\n            if (assemblyPoint.isLeaf() && assemblyPoint.isPoint()) {\n                validatedPivot = assemblyPoint.geometry.asTuple();\n            }\n            else {\n                throw new Error(\"If pivot is being provided as an assembly it must be an Assembly of a singular Point\");\n            }\n        }\n        if (!validatedPivot) {\n            // Point not provided, set a default\n            // get assembly bounds\n            let mins = [Infinity, Infinity, Infinity];\n            let maxs = [-Infinity, -Infinity, -Infinity];\n            toRotate.onLeafs((leaf) => {\n                const bounds = leaf.geometry.clone().boundingBox.bounds;\n                const minEdge = bounds[0];\n                const maxEdge = bounds[1];\n                mins = mins.map((v, i) => Math.min(v, minEdge[i]));\n                maxs = maxs.map((v, i) => Math.max(v, maxEdge[i]));\n                return leaf;\n            });\n            validatedPivot = mins.map((v, i) => { return (v + maxs[i]) / 2; });\n        }\n        const transform = eulerToSingleAxisRotation(x, y, z);\n        // now that pivot point is set, do the rotation\n        return toRotate.onLeafs((leaf) => {\n            leaf.geometry = leaf.geometry.rotate(transform.angleDeg, validatedPivot, transform.axis);\n            return leaf;\n        });\n    }\n    throw new Error(\"2d drawings not yet supported\");\n}\nfunction degreesToRadians(deg) {\n    return (deg * Math.PI) / 180;\n}\nfunction radiansToDegrees(rad) {\n    return (rad * 180) / Math.PI;\n}\n/**\n * 3x3 matrix multiplication\n */\nfunction multiply3x3(a, b) {\n    const out = Array.from({ length: 3 }, () => [0, 0, 0]);\n    for (let r = 0; r < 3; r++) {\n        for (let c = 0; c < 3; c++) {\n            out[r][c] =\n                a[r][0] * b[0][c] +\n                    a[r][1] * b[1][c] +\n                    a[r][2] * b[2][c];\n        }\n    }\n    return out;\n}\n/**\n * Rotation matrix around X axis\n */\nfunction rotationX(rad) {\n    const c = Math.cos(rad);\n    const s = Math.sin(rad);\n    return [\n        [1, 0, 0],\n        [0, c, -s],\n        [0, s, c],\n    ];\n}\n/**\n * Rotation matrix around Y axis\n */\nfunction rotationY(rad) {\n    const c = Math.cos(rad);\n    const s = Math.sin(rad);\n    return [\n        [c, 0, s],\n        [0, 1, 0],\n        [-s, 0, c],\n    ];\n}\n/**\n * Rotation matrix around Z axis\n */\nfunction rotationZ(rad) {\n    const c = Math.cos(rad);\n    const s = Math.sin(rad);\n    return [\n        [c, -s, 0],\n        [s, c, 0],\n        [0, 0, 1],\n    ];\n}\n/**\n * Convert a rotation matrix into axis-angle form.\n */\nfunction matrixToAxisAngle(m) {\n    const trace = m[0][0] + m[1][1] + m[2][2];\n    // Numerical safety\n    const cosTheta = Math.min(1, Math.max(-1, (trace - 1) / 2));\n    const theta = Math.acos(cosTheta);\n    // No rotation\n    if (Math.abs(theta) < 1e-8) {\n        return {\n            angleDeg: 0,\n            axis: [1, 0, 0],\n        };\n    }\n    const sinTheta = Math.sin(theta);\n    const x = (m[2][1] - m[1][2]) / (2 * sinTheta);\n    const y = (m[0][2] - m[2][0]) / (2 * sinTheta);\n    const z = (m[1][0] - m[0][1]) / (2 * sinTheta);\n    // Normalize axis\n    const len = Math.hypot(x, y, z);\n    return {\n        angleDeg: radiansToDegrees(theta),\n        axis: [x / len, y / len, z / len],\n    };\n}\n/**\n * Convert Euler rotations into one axis-angle rotation.\n *\n * Rotation order:\n *   X -> Y -> Z\n *\n * If your CAD engine applies them differently,\n * change the multiplication order.\n */\nfunction eulerToSingleAxisRotation(xDeg, yDeg, zDeg) {\n    const rx = rotationX(degreesToRadians(xDeg));\n    const ry = rotationY(degreesToRadians(yDeg));\n    const rz = rotationZ(degreesToRadians(zDeg));\n    // Combined rotation matrix:\n    // Apply X, then Y, then Z\n    const combined = multiply3x3(rz, multiply3x3(ry, rx));\n    return matrixToAxisAngle(combined);\n}\n"
     },
     {
       "atomType": "Input",
@@ -198,6 +192,162 @@
           "ioValue": null
         }
       ]
+    },
+    {
+      "atomType": "Rotate",
+      "x": 0.7096354166666666,
+      "y": 0.5942857142857143,
+      "uniqueID": "id-55",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "x-axis degrees",
+          "ioValue": 60,
+          "currentEquation": "60"
+        },
+        {
+          "name": "y-axis degrees",
+          "ioValue": 30
+        },
+        {
+          "name": "z-axis degrees",
+          "ioValue": 10,
+          "currentEquation": "10"
+        }
+      ]
+    },
+    {
+      "atomType": "GitHubMolecule",
+      "x": 0.39322916666666663,
+      "y": 0.28285714285714286,
+      "uniqueID": "id-67",
+      "name": "crv.Point",
+      "ioValues": [
+        {
+          "name": "X",
+          "ioValue": 90
+        },
+        {
+          "name": "Y",
+          "ioValue": 25
+        },
+        {
+          "name": "Z",
+          "ioValue": 0
+        }
+      ],
+      "topLevel": false,
+      "allAtoms": [
+        {
+          "atomType": "Output",
+          "x": 0.98,
+          "y": 0.5,
+          "uniqueID": "id-62",
+          "ioValues": [
+            {
+              "name": "number or geometry",
+              "ioValue": "__GEOMETRY_INPUT__"
+            }
+          ]
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.15384615384615385,
+          "uniqueID": "id-63",
+          "name": "X"
+        },
+        {
+          "atomType": "Code",
+          "x": 0.2688802083333333,
+          "y": 0.42857142857142855,
+          "uniqueID": "id-64",
+          "ioValues": [
+            {
+              "name": "x",
+              "ioValue": 90
+            },
+            {
+              "name": "y",
+              "ioValue": 25
+            },
+            {
+              "name": "z",
+              "ioValue": 0
+            }
+          ],
+          "interpreterVersion": 1,
+          "code": "\nfunction run(x: number = 0, y: number = 0, z: number = 0) {\n  return replicad.makeVertex([x,y,z])\n}",
+          "compiledCode": "\"use strict\";\nfunction run(x = 0, y = 0, z = 0) {\n    return replicad.makeVertex([x, y, z]);\n}\n"
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.24615384615384617,
+          "uniqueID": "id-65",
+          "name": "Y"
+        },
+        {
+          "atomType": "Input",
+          "x": 0.025384615384615384,
+          "y": 0.3384615384615385,
+          "uniqueID": "id-66",
+          "name": "Z"
+        }
+      ],
+      "allConnectors": [
+        {
+          "ap2Name": "x",
+          "ap1ID": "id-63",
+          "ap2ID": "id-64"
+        },
+        {
+          "ap2Name": "number or geometry",
+          "ap1ID": "id-64",
+          "ap2ID": "id-62"
+        },
+        {
+          "ap2Name": "y",
+          "ap1ID": "id-65",
+          "ap2ID": "id-64"
+        },
+        {
+          "ap2Name": "z",
+          "ap1ID": "id-66",
+          "ap2ID": "id-64"
+        }
+      ],
+      "parentRepo": {
+        "lastFoundGit": "2026-05-18T10:23:39.136Z",
+        "privateRepo": false,
+        "repoName": "crv.Point",
+        "dateCreated": "2026-05-08T22:20:14Z",
+        "likes": 0,
+        "readMe": "https://raw.githubusercontent.com/tristan-huber/crv.Point/master/README.md?sanitize=true",
+        "yyyy": 2026,
+        "topMoleculeID": "id-1",
+        "githubMoleculesUsed": [],
+        "html_url": "https://github.com/tristan-huber/crv.Point",
+        "topics": [
+          "abundance-tool"
+        ],
+        "parentRepo": null,
+        "forks": 0,
+        "dateModified": "739744",
+        "ranking": 0.9,
+        "searchField": "crv.point tristan-huber simple 3d point defined by it's xyz position abundance-tool",
+        "owner": "tristan-huber",
+        "description": "Simple 3d Point defined by it's xyz position",
+        "contentURL": "https://raw.githubusercontent.com/tristan-huber/crv.Point/master/project.abundance?sanitize=true",
+        "svgURL": "https://raw.githubusercontent.com/tristan-huber/crv.Point/master/project.svg?sanitize=true",
+        "isLocal": false
+      },
+      "unitsKey": "Unitless",
+      "fileTypeVersion": 1,
+      "lastReloadedFromGithubAt": 1779128409429
     }
   ],
   "allConnectors": [
@@ -232,9 +382,19 @@
       "ap2ID": "id-4"
     },
     {
-      "ap2Name": "number or geometry",
+      "ap2Name": "geometry",
       "ap1ID": "id-45",
+      "ap2ID": "id-55"
+    },
+    {
+      "ap2Name": "number or geometry",
+      "ap1ID": "id-55",
       "ap2ID": "id-2"
+    },
+    {
+      "ap2Name": "pivotPoint",
+      "ap1ID": "id-67",
+      "ap2ID": "id-4"
     }
   ],
   "unitsKey": "Unitless",
