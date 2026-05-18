@@ -20,6 +20,10 @@
     {
       "name": "Z",
       "ioValue": 10
+    },
+    {
+      "name": "Geometry",
+      "ioValue": 10
     }
   ],
   "topLevel": true,
@@ -47,6 +51,10 @@
           "ioValue": "__GEOMETRY_INPUT__"
         },
         {
+          "name": "pivotPoint",
+          "ioValue": []
+        },
+        {
           "name": "x",
           "ioValue": 60,
           "currentEquation": "60"
@@ -69,28 +77,28 @@
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.15384615384615385,
+      "y": 0.4,
       "uniqueID": "id-13",
       "name": "PivotPoint"
     },
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.24615384615384617,
+      "y": 0.5085714285714286,
       "uniqueID": "id-16",
       "name": "X"
     },
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.3384615384615385,
+      "y": 0.6857142857142857,
       "uniqueID": "id-19",
       "name": "Y"
     },
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.4307692307692308,
+      "y": 0.7799999999999999,
       "uniqueID": "id-22",
       "name": "Z"
     },
@@ -221,22 +229,23 @@
     },
     {
       "atomType": "GitHubMolecule",
-      "x": 0.39322916666666663,
-      "y": 0.28285714285714286,
+      "x": 0.34244791666666663,
+      "y": 0.2742857142857143,
       "uniqueID": "id-67",
       "name": "crv.Point",
       "ioValues": [
         {
           "name": "X",
-          "ioValue": 90
+          "ioValue": 10
         },
         {
           "name": "Y",
-          "ioValue": 25
+          "ioValue": 20
         },
         {
           "name": "Z",
-          "ioValue": 0
+          "ioValue": 30,
+          "currentEquation": "30"
         }
       ],
       "topLevel": false,
@@ -268,15 +277,15 @@
           "ioValues": [
             {
               "name": "x",
-              "ioValue": 90
+              "ioValue": 10
             },
             {
               "name": "y",
-              "ioValue": 25
+              "ioValue": 20
             },
             {
               "name": "z",
-              "ioValue": 0
+              "ioValue": 30
             }
           ],
           "interpreterVersion": 1,
@@ -348,6 +357,13 @@
       "unitsKey": "Unitless",
       "fileTypeVersion": 1,
       "lastReloadedFromGithubAt": 1779128409429
+    },
+    {
+      "atomType": "Input",
+      "x": 0.025384615384615384,
+      "y": 0.23714285714285713,
+      "uniqueID": "id-82",
+      "name": "Geometry"
     }
   ],
   "allConnectors": [
@@ -390,11 +406,6 @@
       "ap2Name": "number or geometry",
       "ap1ID": "id-55",
       "ap2ID": "id-2"
-    },
-    {
-      "ap2Name": "pivotPoint",
-      "ap1ID": "id-67",
-      "ap2ID": "id-4"
     }
   ],
   "unitsKey": "Unitless",

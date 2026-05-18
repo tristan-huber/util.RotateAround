@@ -10,6 +10,7 @@
 - **X** (undefined)
 - **Y** (undefined)
 - **Z** (undefined)
+- **Geometry** (number)
 
 
 
