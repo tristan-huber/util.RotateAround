@@ -364,6 +364,31 @@
       "y": 0.23714285714285713,
       "uniqueID": "id-82",
       "name": "Geometry"
+    },
+    {
+      "atomType": "Rotate",
+      "x": 0.2578125,
+      "y": 0.48571428571428577,
+      "uniqueID": "id-85",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "x-axis degrees",
+          "ioValue": 60
+        },
+        {
+          "name": "y-axis degrees",
+          "ioValue": 0,
+          "currentEquation": "0"
+        },
+        {
+          "name": "z-axis degrees",
+          "ioValue": 10
+        }
+      ]
     }
   ],
   "allConnectors": [
@@ -371,6 +396,11 @@
       "ap2Name": "geometry",
       "ap1ID": "id-25",
       "ap2ID": "id-29"
+    },
+    {
+      "ap2Name": "geometry",
+      "ap1ID": "id-25",
+      "ap2ID": "id-85"
     },
     {
       "ap2Name": "geometry",
