@@ -56,18 +56,15 @@
         },
         {
           "name": "x",
-          "ioValue": 10,
-          "currentEquation": "0"
+          "ioValue": 10
         },
         {
           "name": "y",
-          "ioValue": 10,
-          "currentEquation": "0"
+          "ioValue": 10
         },
         {
           "name": "z",
-          "ioValue": 10,
-          "currentEquation": "90"
+          "ioValue": 10
         }
       ],
       "interpreterVersion": 1,
@@ -77,28 +74,28 @@
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.4,
+      "y": 0.15384615384615385,
       "uniqueID": "id-13",
       "name": "PivotPoint"
     },
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.5085714285714286,
+      "y": 0.24615384615384617,
       "uniqueID": "id-16",
       "name": "X"
     },
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.6857142857142857,
+      "y": 0.3384615384615385,
       "uniqueID": "id-19",
       "name": "Y"
     },
     {
       "atomType": "Input",
       "x": 0.025384615384615384,
-      "y": 0.7799999999999999,
+      "y": 0.4307692307692308,
       "uniqueID": "id-22",
       "name": "Z"
     },
@@ -130,8 +127,7 @@
         },
         {
           "name": "height",
-          "ioValue": 1,
-          "currentEquation": "1"
+          "ioValue": 1
         }
       ]
     },
@@ -175,13 +171,11 @@
         },
         {
           "name": "yDist",
-          "ioValue": 0,
-          "currentEquation": "0"
+          "ioValue": 0
         },
         {
           "name": "zDist",
-          "ioValue": 5,
-          "currentEquation": "5"
+          "ioValue": 5
         }
       ]
     },
@@ -213,8 +207,7 @@
         },
         {
           "name": "x-axis degrees",
-          "ioValue": 60,
-          "currentEquation": "60"
+          "ioValue": 60
         },
         {
           "name": "y-axis degrees",
@@ -222,8 +215,62 @@
         },
         {
           "name": "z-axis degrees",
-          "ioValue": 10,
-          "currentEquation": "10"
+          "ioValue": 10
+        }
+      ]
+    },
+    {
+      "atomType": "Input",
+      "x": 0.025384615384615384,
+      "y": 0.5230769230769231,
+      "uniqueID": "id-82",
+      "name": "Geometry"
+    },
+    {
+      "atomType": "Rotate",
+      "x": 0.27473958333333337,
+      "y": 0.7571428571428572,
+      "uniqueID": "id-85",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "x-axis degrees",
+          "ioValue": 0
+        },
+        {
+          "name": "y-axis degrees",
+          "ioValue": 0
+        },
+        {
+          "name": "z-axis degrees",
+          "ioValue": 90
+        }
+      ]
+    },
+    {
+      "atomType": "Move",
+      "x": 0.19335937499999997,
+      "y": 0.42,
+      "uniqueID": "id-91",
+      "ioValues": [
+        {
+          "name": "geometry",
+          "ioValue": "__GEOMETRY_INPUT__"
+        },
+        {
+          "name": "xDist",
+          "ioValue": 10
+        },
+        {
+          "name": "yDist",
+          "ioValue": 20
+        },
+        {
+          "name": "zDist",
+          "ioValue": 0
         }
       ]
     },
@@ -240,13 +287,11 @@
         },
         {
           "name": "Y",
-          "ioValue": 60,
-          "currentEquation": "60"
+          "ioValue": 60
         },
         {
           "name": "Z",
-          "ioValue": 30,
-          "currentEquation": "30"
+          "ioValue": 30
         }
       ],
       "topLevel": false,
@@ -358,64 +403,6 @@
       "unitsKey": "Unitless",
       "fileTypeVersion": 1,
       "lastReloadedFromGithubAt": 1779128409429
-    },
-    {
-      "atomType": "Input",
-      "x": 0.025384615384615384,
-      "y": 0.23714285714285713,
-      "uniqueID": "id-82",
-      "name": "Geometry"
-    },
-    {
-      "atomType": "Rotate",
-      "x": 0.27473958333333337,
-      "y": 0.7571428571428572,
-      "uniqueID": "id-85",
-      "ioValues": [
-        {
-          "name": "geometry",
-          "ioValue": "__GEOMETRY_INPUT__"
-        },
-        {
-          "name": "x-axis degrees",
-          "ioValue": 0,
-          "currentEquation": "0"
-        },
-        {
-          "name": "y-axis degrees",
-          "ioValue": 0,
-          "currentEquation": "0"
-        },
-        {
-          "name": "z-axis degrees",
-          "ioValue": 90,
-          "currentEquation": "90"
-        }
-      ]
-    },
-    {
-      "atomType": "Move",
-      "x": 0.19335937499999997,
-      "y": 0.42,
-      "uniqueID": "id-91",
-      "ioValues": [
-        {
-          "name": "geometry",
-          "ioValue": "__GEOMETRY_INPUT__"
-        },
-        {
-          "name": "xDist",
-          "ioValue": 10
-        },
-        {
-          "name": "yDist",
-          "ioValue": 20
-        },
-        {
-          "name": "zDist",
-          "ioValue": 0
-        }
-      ]
     }
   ],
   "allConnectors": [

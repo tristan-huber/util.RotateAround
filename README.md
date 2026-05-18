@@ -7,9 +7,9 @@
 ## Inputs
 
 - **PivotPoint** (number)
-- **X** (undefined)
-- **Y** (undefined)
-- **Z** (undefined)
+- **X** (number)
+- **Y** (number)
+- **Z** (number)
 - **Geometry** (number)
 
 
